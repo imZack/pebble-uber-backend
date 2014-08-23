@@ -14,6 +14,7 @@ if (!API_TOKEN) {
 }
 
 http.createServer(function (req, res) {
+  console.log("%s GET %s", new Date().getTime(), req.url);
   var url_parts = url.parse(req.url, true);
   if (url_parts.pathname === '/favicon.ico') {
     res.writeHead(404);
