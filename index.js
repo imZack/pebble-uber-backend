@@ -10,6 +10,7 @@ var PORT = process.env.PORT || 7777;
 if (!API_TOKEN) {
   console.error("API_TOKEN=your_token_here node %s", __filename);
   console.error("https://developer.uber.com/v1/tutorials/#server-side-authentication");
+  process.exit(1);
 }
 
 http.createServer(function (req, res) {
