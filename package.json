@@ -1,0 +1,19 @@
+{
+  "name": "pebble-uber-backend",
+  "version": "0.0.0",
+  "description": "Uber on Pebble Watch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "uber",
+    "pebble"
+  ],
+  "author": "Yulun Shih",
+  "license": "MIT",
+  "dependencies": {
+    "qs": "^1.2.2",
+    "request": "^2.40.0"
+  }
+}
