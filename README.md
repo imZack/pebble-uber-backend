@@ -1,7 +1,7 @@
-pebble-uber-backend
-===================
+Uber Now (backend)
+==================
 
-This is a simple backend for fetching uber's pick up time from your location.
+This is a simple backend for fetching uber's pick up time from your location via [Uber API](https://developer.uber.com/).
 
 Server Usage
 ------------
@@ -51,3 +51,11 @@ curl http://pebble-uber.yulun.me/\?latitude\=25.0422206\&longitude\=121.53816815
   "message":"Missing parameters: latitude, longitude."
 }
 ```
+
+Reference
+---------
+https://developer.uber.com/
+
+License
+-------
+[MIT](http://yulun.mit-license.org/)
