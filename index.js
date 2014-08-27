@@ -41,8 +41,6 @@ function fetchSurgePrice(latitude, longitude, times, cb) {
       }
       
       var prices = JSON.parse(body).prices;
-      console.log(prices);
-      // append price information to times
       prices.forEach(function(price) {
         times.forEach(function(product) {
           if (product.product_id === price.product_id) {
@@ -77,7 +75,6 @@ function fetchEstimateTime(latitude, longitude, cb) {
       // sucess
       // if we have uber now, go fetching the surge price.
       var times = JSON.parse(body).times;
-      console.log(times);
       if (times.length !== 0) {
         fetchSurgePrice(latitude, longitude, times, cb);
       } else {
