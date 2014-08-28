@@ -1,16 +1,6 @@
 var request = require('request');
 var qs = require('qs');
-
-
-var API_TOKEN = process.env.API_TOKEN;
-
-
-if (!API_TOKEN) {
-  console.error("API_TOKEN=your_token_here node %s", __filename);
-  console.error("https://developer.uber.com/v1/tutorials/#server-side-authentication");
-  process.exit(1);
-}
-
+var API_TOKEN = '';
 
 var getIp = function getIp(req) {
   return req.headers['x-forwarded-for'] ||
@@ -82,8 +72,11 @@ var fetchEstimateTime = function fetchEstimateTime(latitude, longitude, cb) {
   });
 };
 
-module.exports = {
-  getIp: getIp,
-  fetchSurgePrice: fetchSurgePrice,
-  fetchEstimateTime: fetchEstimateTime
+module.exports = function(server_token) {
+  API_TOKEN = server_token;
+  return {
+    getIp: getIp,
+    fetchSurgePrice: fetchSurgePrice,
+    fetchEstimateTime: fetchEstimateTime
+  };
 };
