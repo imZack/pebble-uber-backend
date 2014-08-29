@@ -17,6 +17,33 @@ var getIp = function getIp(req) {
 };
 
 
+function fetch(endpoint, params, cb) {
+  params = params || {};
+  var qstring = qs.stringify(params);
+  var url = API_BASE + endpoint + "?" + qstring;
+  request.get({url: url}, function(error, response, body) {
+    // failed
+    if (response.statusCode !== 200) {
+      cb({
+        code: response.statusCode,
+        message: JSON.parse(body).message
+      }, null);
+      return;
+    }
+
+    var obj = null;
+    try {
+      obj = JSON.parse(body);
+    } catch (e) {
+      cb({message: "Invaild JSON string"}, null);
+      return;
+    }
+
+    cb(null, obj);
+  });
+}
+
+
 /**
  * Fetch surge price information by given current location
  * @param  {[type]}   latitude  [latitude]
@@ -32,28 +59,16 @@ var fetchSurgePrice = function fetchSurgePrice(latitude, longitude, cb) {
     end_longitude: longitude,
     server_token: API_TOKEN,
   };
-  var request_url = API_BASE + "estimates/price?" + qs.stringify(params);
-  request.get({url: request_url}, function(error, response, body) {
-    // failed if statusCode is not 200 OK
-    if (response.statusCode !== 200) {
-      var err = {
-        code: response.statusCode,
-        message: "Can't fetch price for " + request_url,
-        log: body
-      };
-      // fire callback with error
+
+  fetch("estimates/price", params, function(err, result) {
+    if (err) {
       cb(err, null);
       return;
     }
-    
-    try {
-      // success, fire callback with results
-      cb(null, JSON.parse(body).prices);
-      return;
-    } catch(e) {
-      cb({message: "Invaild JSON string"}, null);
-      return;
-    }
+
+    // success, fire callback with results
+    cb(null, result.prices);
+    return;
   });
 };
 
@@ -73,26 +88,13 @@ var fetchEstimateTime = function fetchEstimateTime(latitude, longitude,
     start_longitude: longitude
   };
 
-  var request_url = API_BASE + "estimates/time?" + qs.stringify(params);
-  request.get({url: request_url}, function (error, response, body) {
-    // failed
-    if (response.statusCode !== 200) {
-      cb({
-        code: response.statusCode,
-        message: JSON.parse(body).message
-      },null);
+  fetch("estimates/time", params, function(err, result) {
+    if (err) {
+      cb(err, null);
       return;
     }
 
-    var times = null;
-    try {
-      times = JSON.parse(body).times;       
-    } catch (e) {
-      cb({message: "Invaild JSON string"}, null);
-      return;
-    }
-
-    // sucess
+    var times = result.times;
     // if we have uber now, go fetching the surge price.
     if (times.length === 0) {
       cb(null, times);
@@ -107,7 +109,7 @@ var fetchEstimateTime = function fetchEstimateTime(latitude, longitude,
 
     // get surge pirce and merge
     fetchSurgePrice(latitude, longitude, function(err, prices) {
-      if (err !== null) {
+      if (err) {
         cb(err, null);
         return;
       }
@@ -122,7 +124,26 @@ var fetchEstimateTime = function fetchEstimateTime(latitude, longitude,
 
       // finally, fire success callabck
       cb(null, times);
+      return;
     });
+  });
+};
+
+
+var fetchProducts = function fetchProducts(latitude, longitude, cb) {
+  var params = {
+    server_token: API_TOKEN,
+    latitude: latitude,
+    longitude: longitude
+  };
+
+  fetch("products", params, function(err, result) {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+
+    cb(null, result.products);
   });
 };
 
@@ -135,6 +156,7 @@ module.exports = function(server_token) {
   return {
     getIp: getIp,
     fetchSurgePrice: fetchSurgePrice,
-    fetchEstimateTime: fetchEstimateTime
+    fetchEstimateTime: fetchEstimateTime,
+    fetchProducts: fetchProducts
   };
 };
