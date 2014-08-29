@@ -3,12 +3,14 @@ Uber Now (backend)
 
 This is a simple backend for fetching uber's pick up time from your location via [Uber API](https://developer.uber.com/).
 
+Any feature requests is welcome:ok_hand: , please [create a new issue](https://github.com/imZack/pebble-uber-backend/issues/new)
+
 Server Usage
 ------------
 ENV variables
-- IP **default: localhost**
-- PORT **default: 7777**
-- API_TOKEN  **default: None**
+- API_TOKEN  (required) [Apply Link](https://developer.uber.com/)
+- IP (optional) **default: localhost**
+- PORT (optional) **default: 7777**
 
 ```
 API_TOKEN=xxxx node index.js
@@ -18,8 +20,9 @@ Server running at http://localhost:7777
 Client Usage
 ------------
 Query parameters
-- latitude
-- longitude
+- latitude (required)
+- longitude (required)
+- surge (optional) if `surge=1` it will embedded surge pricing data as `surge_multiplier`
 
 ```
 curl http://pebble-uber.yulun.me/\?latitude\=25.0422206\&longitude\=121.53816815
@@ -52,9 +55,18 @@ curl http://pebble-uber.yulun.me/\?latitude\=25.0422206\&longitude\=121.53816815
 }
 ```
 
+TODO
+----
+- Add tests
+- ...
+
 Reference
 ---------
 https://developer.uber.com/
+
+Author
+------
+YuLun Shih shih@yulun.me
 
 License
 -------
