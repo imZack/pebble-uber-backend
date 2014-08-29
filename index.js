@@ -33,30 +33,28 @@ var fetchSurgePrice = function fetchSurgePrice(latitude, longitude, cb) {
     server_token: API_TOKEN,
   };
   var request_url = API_BASE + "estimates/price?" + qs.stringify(params);
-  request.get({url: request_url},
-    function(error, response, body) {
-      // failed if statusCode is not 200 OK
-      if (response.statusCode !== 200) {
-        var err = {
-          code: response.statusCode,
-          message: "Can't fetch price for " + request_url,
-          log: body
-        };
-        // fire callback with error
-        cb(err, null);
-        return;
-      }
-      
-      try {
-        // success, fire callback with results
-        cb(null, JSON.parse(body).prices);
-        return;
-      } catch(e) {
-        cb({message: "Invaild JSON string"}, null);
-        return;
-      }
+  request.get({url: request_url}, function(error, response, body) {
+    // failed if statusCode is not 200 OK
+    if (response.statusCode !== 200) {
+      var err = {
+        code: response.statusCode,
+        message: "Can't fetch price for " + request_url,
+        log: body
+      };
+      // fire callback with error
+      cb(err, null);
+      return;
     }
-  );
+    
+    try {
+      // success, fire callback with results
+      cb(null, JSON.parse(body).prices);
+      return;
+    } catch(e) {
+      cb({message: "Invaild JSON string"}, null);
+      return;
+    }
+  });
 };
 
 
@@ -76,56 +74,55 @@ var fetchEstimateTime = function fetchEstimateTime(latitude, longitude,
   };
 
   var request_url = API_BASE + "estimates/time?" + qs.stringify(params);
-  request.get({url: request_url},
-    function (error, response, body) {
-      // failed
-      if (response.statusCode !== 200) {
-        cb({
-          code: response.statusCode,
-          message: JSON.parse(body).message
-        },null);
+  request.get({url: request_url}, function (error, response, body) {
+    // failed
+    if (response.statusCode !== 200) {
+      cb({
+        code: response.statusCode,
+        message: JSON.parse(body).message
+      },null);
+      return;
+    }
+
+    var times = null;
+    try {
+      times = JSON.parse(body).times;       
+    } catch (e) {
+      cb({message: "Invaild JSON string"}, null);
+      return;
+    }
+
+    // sucess
+    // if we have uber now, go fetching the surge price.
+    if (times.length === 0) {
+      cb(null, times);
+      return;
+    }
+
+    // no need embedded surge price
+    if (surge !== true) {
+      cb(null, times);
+      return;
+    }
+
+    // get surge pirce and merge
+    fetchSurgePrice(latitude, longitude, function(err, prices) {
+      if (err !== null) {
+        cb(err, null);
         return;
       }
 
-      var times = null;
-      try {
-        times = JSON.parse(body).times;       
-      } catch (e) {
-        cb({message: "Invaild JSON string"}, null);
-        return;
-      }
-
-      // sucess
-      // if we have uber now, go fetching the surge price.
-      if (times.length === 0) {
-        cb(null, times);
-        return;
-      }
-
-      // no need embedded surge price
-      if (surge !== true) {
-        cb(null, times);
-        return;
-      }
-
-      // get surge pirce and merge
-      fetchSurgePrice(latitude, longitude, function(err, prices) {
-        if (err !== null) {
-          cb(err, null);
-          return;
-        }
-
-        prices.forEach(function(price) {
-          times.forEach(function(product) {
-            if (product.product_id === price.product_id) {
-              product.surge_multiplier = price.surge_multiplier;
-            }
-          });
+      prices.forEach(function(price) {
+        times.forEach(function(product) {
+          if (product.product_id === price.product_id) {
+            product.surge_multiplier = price.surge_multiplier;
+          }
         });
-
-        // finally, fire success callabck
-        cb(null, times);
       });
+
+      // finally, fire success callabck
+      cb(null, times);
+    });
   });
 };
 
