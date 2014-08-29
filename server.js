@@ -24,8 +24,19 @@ http.createServer(function (req, res) {
     return;
   }
 
-  uber.fetchEstimateTime(url_parts.query.latitude, url_parts.query.longitude,
-    function(times) {
+  uber.fetchEstimateTime(url_parts.query.latitude,
+                         url_parts.query.longitude,
+                         url_parts.query.surge === '1',
+    function(err, times) {
+      if (err !== null) {
+        err.code = err.code || 500;
+        err.message = err.message || "Internal Error";
+        console.error(err);
+        res.writeHead(err.code, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({message: err.message}));
+        return;
+      }
+
       res.writeHead(200, {'Content-Type': 'application/json'});
       res.end(JSON.stringify({times: times}));
       return;
