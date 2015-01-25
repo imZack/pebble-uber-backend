@@ -3,12 +3,14 @@ Uber Now (backend)
 
 This is a simple backend for fetching uber's pick up time from your location via [Uber API](https://developer.uber.com/).
 
+Any feature requests is welcome:ok_hand: , please [create a new issue](https://github.com/imZack/pebble-uber-backend/issues/new)
+
 Server Usage
 ------------
 ENV variables
-- IP **default: localhost**
-- PORT **default: 7777**
-- API_TOKEN  **default: None**
+- API_TOKEN  (required) [Apply Link](https://developer.uber.com/)
+- IP (optional) **default: localhost**
+- PORT (optional) **default: 7777**
 
 ```
 API_TOKEN=xxxx node index.js
@@ -18,8 +20,9 @@ Server running at http://localhost:7777
 Client Usage
 ------------
 Query parameters
-- latitude
-- longitude
+- latitude (required)
+- longitude (required)
+- surge (optional) if `surge=1` it will embedded surge pricing data as `surge_multiplier`
 
 ```
 curl http://pebble-uber.yulun.me/\?latitude\=25.0422206\&longitude\=121.53816815
@@ -30,18 +33,25 @@ curl http://pebble-uber.yulun.me/\?latitude\=25.0422206\&longitude\=121.53816815
 {
   "times": [
     {
-      "localized_display_name": "UberBLACK",
-      "estimate": 90,
-      "display_name": "UberBLACK",
-      "product_id": "000f8239-1d78-41b5-a0bb-4beca64a3c09"
+      "localized_display_name": "uberX",
+      "estimate": 440,
+      "display_name": "uberX",
+      "product_id": "49348f0a-c623-46c0-86eb-9c2f761e8de8",
+      "surge_multiplier": 1,
+      "image": "http://d1a3f4spazzrp4.cloudfront.net/car-types/mono/mono-uberx.png",
+      "description": "THE LOW-COST UBER WITH RIDESHARING"
     },
     {
-      "localized_display_name": "uberX",
-      "estimate": 404,
-      "display_name": "uberX",
-      "product_id": "bb693cd4-3366-4c48-9874-155de18a31f5"
+      "localized_display_name": "UberBLACK",
+      "estimate": 302,
+      "display_name": "UberBLACK",
+      "product_id": "9073f2ef-42c1-4e01-b3cb-bb5d561c9821",
+      "surge_multiplier": 1,
+      "image": "http://d1a3f4spazzrp4.cloudfront.net/car-types/mono/mono-black.png",
+      "description": "The Original Uber"
     }
-  ]
+  ],
+  "is_available": true
 }
 ```
 
@@ -52,9 +62,18 @@ curl http://pebble-uber.yulun.me/\?latitude\=25.0422206\&longitude\=121.53816815
 }
 ```
 
+TODO
+----
+- Add tests
+- ...
+
 Reference
 ---------
 https://developer.uber.com/
+
+Author
+------
+YuLun Shih shih@yulun.me
 
 License
 -------
