@@ -9,12 +9,12 @@ Server Usage
 ------------
 ENV variables
 - API_TOKEN  (required) [Apply Link](https://developer.uber.com/)
-- IP (optional) **default: localhost**
-- PORT (optional) **default: 7777**
+- IP (optional) **default: 0.0.0.0**
+- PORT (optional) **default: 8080**
 
 ```
 API_TOKEN=xxxx node index.js
-Server running at http://localhost:7777
+Server running at http://0.0.0.0:8080
 ```
 
 Client Usage

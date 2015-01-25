@@ -1,8 +1,8 @@
 var http = require('http');
 var url = require('url');
 
-var IP = process.env.IP || "localhost";
-var PORT = process.env.PORT || 7777;
+var IP = process.env.IP || "0.0.0.0";
+var PORT = process.env.PORT || 8080;
 var API_TOKEN = process.env.API_TOKEN;
 if (!API_TOKEN) {
   console.error("API_TOKEN=your_token_here node %s", __filename);
